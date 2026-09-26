@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- Start Gazebo with empty world -->
-    <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+    <!-- Start Gazebo with empty world --> 
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find autocar_ros)/worlds/simple.world"/>
+    </include>
 
     <!-- Load robot description from xacro -->
     <param name="robot_description" command="$(find xacro)/xacro '$(find autocar_ros)/urdf/simple_car.xacro'"/>
