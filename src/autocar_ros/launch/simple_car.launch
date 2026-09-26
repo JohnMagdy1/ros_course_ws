@@ -10,4 +10,7 @@
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
         args="-param robot_description -urdf -model car -x 0 -y 0 -z 0.1" output="screen"/>
 
+   <!-- RViz visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find autocar_ros)/rviz/camera.rviz"/>
+
 </launch>
