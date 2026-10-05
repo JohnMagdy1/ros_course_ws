@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<robot name="follower_vehicle" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="r" value="0.3"/>
+  <xacro:property name="w" value="0.25"/>
+
+  <!-- Base Footprint -->
+  <link name="base_footprint"/>
+  
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="chassis"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+
+  <link name="chassis">
+    <visual>
+      <geometry>
+        <!-- <box size="1.4 3.8 0.3"/> -->
+        <!-- <mesh filename="package://autocar_ros/meshes/car_019.dae"/> -->
+        <mesh filename="package://gazebo_cars/models/car_019/meshes/car_019.dae"/>
+      </geometry>
+      <origin xyz="-0.05 0 0.56" rpy="0 0 -1.5708"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1.4 3.8 0.3"/>
+      </geometry>
+      <origin xyz="0 0 0.45" rpy="0 0 -1.5708"/>
+    </collision>
+    <inertial>
+      <mass value="5.0"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
+    </inertial>
+  </link>
+
+  <!-- Wheel Macro -->
+  <xacro:macro name="wheel" params="name x y mu">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <cylinder radius="${r}" length="${w}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${r}" length="${w}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.5"/>
+        <inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.03"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="continuous">
+      <parent link="chassis"/>
+      <child link="${name}"/>
+      <origin xyz="${x} ${y} 0.2" rpy="1.5708 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <gazebo reference="${name}">
+      <material>Gazebo/Black</material>
+      <!-- <mu1>${mu}</mu1>
+      <mu2>${mu}</mu2> -->
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Rear Wheels -->
+  <xacro:wheel name="rear_wheel_right" x="-1.25" y="0.8" mu="10"/>
+  <xacro:wheel name="rear_wheel_left"  x="-1.25" y="-0.8" mu="10"/>
+
+  <!-- Front Wheels -->
+  <xacro:wheel name="front_wheel_right" x="1.25" y="0.8" mu="5"/>
+  <xacro:wheel name="front_wheel_left"  x="1.25" y="-0.8" mu="5"/>
+  
+  <!-- Depth Camera Link -->
+  <link name="depth_camera_link">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.000166667" ixy="0" ixz="0" iyy="0.000166667" iyz="0" izz="0.000166667"/>
+    </inertial>
+  </link>
+
+  <!-- Camera Joint (Fixed) -->
+  <joint name="chassis_depth_camera_fixed" type="fixed">
+    <parent link="chassis"/>
+    <child link="depth_camera_link"/>
+    <origin rpy="0 0 0" xyz="-0.1 0 1.25"/>
+  </joint>
+
+  <!-- Differential Drive Plugin -->
+  <gazebo>
+    <plugin name="planar_move" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>10</odometryRate>
+      <cmdTimeout>0.5</cmdTimeout>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <leftJoint>front_wheel_left_joint</leftJoint>
+      <rightJoint>front_wheel_right_joint</rightJoint>
+      <wheelSeparation>1.6</wheelSeparation>
+      <wheelDiameter>0.6</wheelDiameter>
+      <torque>0</torque>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="depth_camera_link">
+    <material>Gazebo/Black</material>
+    <sensor name="depth_camera" type="depth">
+      <update_rate>30.0</update_rate>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>320</width>
+          <height>240</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>100</far>
+        </clip>
+      </camera>
+      <plugin name="depth_camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>30.0</updateRate>
+        <cameraName>depth_camera</cameraName>
+        <imageTopicName>depth/image_raw</imageTopicName>
+        <cameraInfoTopicName>depth/camera_info</cameraInfoTopicName>
+        <frameName>depth_camera_link</frameName>
+      </plugin> 
+    </sensor>
+  </gazebo>     
+</robot>

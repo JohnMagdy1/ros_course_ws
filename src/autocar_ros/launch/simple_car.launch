@@ -6,7 +6,7 @@
     </include>
 
     <!-- Load robot description from xacro -->
-    <param name="robot_description" command="$(find xacro)/xacro '$(find autocar_ros)/urdf/simple_car.xacro'"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find autocar_ros)/urdf/autocar_ros.xacro'"/>
 
     <!-- Spawn robot -->
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
@@ -20,7 +20,7 @@
 
     <!-- Publish joint states -->
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <param name="rate" value="50" />
+        <param name="rate" value="10" />
     </node>
     
     <!-- Robot state publisher with proper rate -->
