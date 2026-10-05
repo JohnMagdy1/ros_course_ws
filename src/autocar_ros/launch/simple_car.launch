@@ -30,4 +30,13 @@
     <!-- Robot state publisher with proper rate -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom"
+        args="0 0 0 0 0 0 map odom" />
+
+    <node name="map_server" pkg="map_server" type="map_server"
+          args="$(find autocar_ros)/maps/warehouse.yaml"
+          output="screen">
+        <param name="frame_id" value="map"/>
+    </node>
+    
 </launch>
