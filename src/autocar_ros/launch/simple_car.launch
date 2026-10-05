@@ -13,9 +13,17 @@
         args="-param robot_description -urdf -model car -x 0 -y 0 -z 0.1" output="screen"/>
 
    <!-- RViz visualization -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find autocar_ros)/rviz/camera.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find autocar_ros)/rviz/car.rviz"/>
 
     <!-- Control node -->
     <node name="manual_drive_node" pkg="autocar_ros" type="car_drive.py" output="screen" launch-prefix="xterm -e python3"/>
+
+    <!-- Publish joint states -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="rate" value="50" />
+    </node>
+    
+    <!-- Robot state publisher with proper rate -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
 </launch>
