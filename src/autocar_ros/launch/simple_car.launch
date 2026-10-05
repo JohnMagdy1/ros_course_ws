@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
 <launch>
+
+    <env name="GAZEBO_MODEL_PATH" value="$(find autocar_ros)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+
     <!-- Start Gazebo with empty world --> 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find autocar_ros)/worlds/simple.world"/>
+        <arg name="world_name" value="$(find autocar_ros)/worlds/warehouse.world"/>
+        <arg name="verbose" value="true"/>
     </include>
 
     <!-- Load robot description from xacro -->
