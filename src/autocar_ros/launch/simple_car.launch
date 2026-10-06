@@ -5,7 +5,7 @@
 
     <!-- Start Gazebo with empty world --> 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find autocar_ros)/worlds/warehouse.world"/>
+        <arg name="world_name" value="$(find autocar_ros)/worlds/autocar_ros.world"/>
         <arg name="verbose" value="true"/>
     </include>
 
@@ -34,7 +34,7 @@
         args="0 0 0 0 0 0 map odom" />
 
     <node name="map_server" pkg="map_server" type="map_server"
-          args="$(find autocar_ros)/maps/warehouse.yaml"
+          args="$(find autocar_ros)/maps/autocar_ros.yaml"
           output="screen">
         <param name="frame_id" value="map"/>
     </node>
