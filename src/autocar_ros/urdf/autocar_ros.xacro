@@ -4,6 +4,7 @@
   <!-- ========== SENSOR ENABLE ARGS (default: all on) ========== -->
   <xacro:arg name="enable_frontcam" default="true"/>
   <xacro:arg name="enable_rearcam" default="true"/>
+  <xacro:arg name="enable_imu" default="true"/>
 
   <xacro:property name="r" value="0.3"/>
   <xacro:property name="w" value="0.25"/>
@@ -107,4 +108,10 @@
     <xacro:camera_d435 parent_link="chassis" name="camera_rear"
                        xyz="-1.1 0 1.15" rpy="0 0 3.14159" use_depth="false"/>
   </xacro:if>
+
+  <xacro:if value="$(arg enable_imu)">
+    <xacro:include filename="$(find autocar_ros)/urdf/sensors/imu.xacro"/>
+    <xacro:imu_sensor name="imu" parent="chassis" xyz="0 0 0" rpy="0 -1.5708 0"/>
+  </xacro:if>
+
 </robot>
