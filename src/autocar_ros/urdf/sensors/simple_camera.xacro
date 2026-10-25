@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="simple_camera"
+               params="parent_link name xyz rpy
+                       min_range:=0.3 max_range:=30.0 update_rate:=10
+                       horizontal_fov_deg:=80 width:=640 height:=480">
+
+    <!-- Camera link -->
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.000166667" ixy="0" ixz="0"
+                 iyy="0.000166667" iyz="0"
+                 izz="0.000166667"/>
+      </inertial>
+    </link>
+
+    <!-- Fixed joint to parent -->
+    <joint name="${parent_link}_${name}_fixed" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+
+      <!-- ========== COLOR-ONLY MODE ========== -->
+        <sensor type="camera" name="${name}">
+          <update_rate>${update_rate}</update_rate>
+          <camera>
+            <horizontal_fov>${horizontal_fov_deg * 3.14 / 180.0}</horizontal_fov>
+            <image>
+              <format>R8G8B8</format>
+              <width>${width}</width>
+              <height>${height}</height>
+            </image>
+            <clip>
+              <near>${min_range}</near>
+              <far>${max_range}</far>
+            </clip>
+          </camera>
+          <plugin name="${name}_camera_controller" filename="libgazebo_ros_camera.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>${update_rate}</updateRate>
+            <cameraName>${name}</cameraName>
+            <imageTopicName>color/image_raw</imageTopicName>
+            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+            <frameName>${name}_color_optical_frame</frameName>
+          </plugin>
+        </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
