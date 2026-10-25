@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="follower_vehicle" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="simple_car" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="r" value="0.3"/>
   <xacro:property name="w" value="0.25"/>
