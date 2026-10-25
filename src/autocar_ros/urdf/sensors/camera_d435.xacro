@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find hector_sensors_description)/urdf/realsense_d435_camera.urdf.xacro"/>
+
+  <xacro:macro name="camera_d435"
+               params="parent_link name xyz rpy
+                       min_range:=0.3 max_range:=30.0 update_rate:=20
+                       horizontal_fov_deg:=80 width:=640 height:=480
+                       use_depth:=true">
+
+    <!-- Physical model (mesh + collision + inertial) — same for both modes -->
+    <xacro:realsense_d435_camera_model name="${name}" parent="${parent_link}">
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </xacro:realsense_d435_camera_model>
+
+    <gazebo reference="${name}_link">
+
+      <!-- ========== DEPTH MODE ========== -->
+      <xacro:if value="${use_depth}">
+        <sensor type="depth" name="${name}">
+          <update_rate>${update_rate}</update_rate>
+          <camera>
+            <horizontal_fov>${horizontal_fov_deg * M_PI / 180.0}</horizontal_fov>
+            <image>
+              <format>B8G8R8</format>
+              <width>${width}</width>
+              <height>${height}</height>
+            </image>
+            <clip>
+              <near>${min_range}</near>
+              <far>${max_range}</far>
+            </clip>
+          </camera>
+          <plugin name="${name}_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>${update_rate}</updateRate>
+            <cameraName>${name}</cameraName>
+            <imageTopicName>color/image_raw</imageTopicName>
+            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+            <frameName>${name}_color_optical_frame</frameName>
+            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>depth/image_raw</depthImageTopicName>
+            <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+            <pointCloudTopicName>depth/points</pointCloudTopicName>
+            <pointCloudCutoff>${min_range}</pointCloudCutoff>
+            <pointCloudCutoffMax>${max_range}</pointCloudCutoffMax>
+          </plugin>
+        </sensor>
+      </xacro:if>
+
+      <!-- ========== COLOR-ONLY MODE ========== -->
+      <xacro:unless value="${use_depth}">
+        <sensor type="camera" name="${name}">
+          <update_rate>${update_rate}</update_rate>
+          <camera>
+            <horizontal_fov>${horizontal_fov_deg * M_PI / 180.0}</horizontal_fov>
+            <image>
+              <format>R8G8B8</format>
+              <width>${width}</width>
+              <height>${height}</height>
+            </image>
+            <clip>
+              <near>${min_range}</near>
+              <far>${max_range}</far>
+            </clip>
+          </camera>
+          <plugin name="${name}_camera_controller" filename="libgazebo_ros_camera.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>${update_rate}</updateRate>
+            <cameraName>${name}</cameraName>
+            <imageTopicName>color/image_raw</imageTopicName>
+            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+            <frameName>${name}_color_optical_frame</frameName>
+          </plugin>
+        </sensor>
+      </xacro:unless>
+
+    </gazebo>
+  </xacro:macro>
+
+</robot>

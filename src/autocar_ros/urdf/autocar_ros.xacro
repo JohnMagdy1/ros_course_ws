@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot name="autocar_ros" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <!-- ========== SENSOR ENABLE ARGS (default: all on) ========== -->
+  <xacro:arg name="enable_frontcam" default="true"/>
+  <xacro:arg name="enable_rearcam" default="true"/>
+
   <xacro:property name="r" value="0.3"/>
   <xacro:property name="w" value="0.25"/>
 
@@ -92,7 +96,15 @@
     </plugin>
   </gazebo>
 
-  <xacro:include filename="$(find autocar_ros)/urdf/sensors/simple_camera.xacro"/>
-  <xacro:simple_camera parent_link="chassis" name="camera_front"
-                      xyz="0.06 0 1.15" rpy="0 0 0"/>
+  <xacro:include filename="$(find autocar_ros)/urdf/sensors/camera_d435.xacro"/>
+  
+  <xacro:if value="$(arg enable_frontcam)">
+    <xacro:camera_d435 parent_link="chassis" name="camera_front"
+                      xyz="0.06 0 1.15" rpy="0 0 0" use_depth="true"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg enable_rearcam)">
+    <xacro:camera_d435 parent_link="chassis" name="camera_rear"
+                       xyz="-1.1 0 1.15" rpy="0 0 3.14159" use_depth="false"/>
+  </xacro:if>
 </robot>

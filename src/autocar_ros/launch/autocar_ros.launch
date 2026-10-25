@@ -4,6 +4,7 @@
     <!-- Start Gazebo with empty world --> 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find autocar_ros)/worlds/autocar_ros.world"/>
+        <arg name="gui" value="false"/>
     </include>
 
     <!-- Load robot description from xacro -->
@@ -36,4 +37,11 @@
         <param name="frame_id" value="map"/>
     </node>
     
+    <node pkg="tf2_ros" type="static_transform_publisher" name="front_link_to_optical"
+        args="0 0 0 -1.5708 0 -1.5708 camera_front_link camera_front_color_optical_frame" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="rear_link_to_optical"
+            args="0 0 0 -1.5708 0 -1.5708 camera_rear_link camera_rear_color_optical_frame"/>
+
+
 </launch>
