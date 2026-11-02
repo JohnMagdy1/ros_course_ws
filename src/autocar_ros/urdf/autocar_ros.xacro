@@ -119,6 +119,8 @@
     <xacro:include filename="$(find autocar_ros)/urdf/sensors/lidar.xacro"/>
     <xacro:lidar_2d parent="chassis" name="lidar_2d"
                     xyz="1.2 0.0 0.75" rpy="0 0 0"/>
+    <xacro:lidar_3d parent="chassis" name="lidar_3d"
+                    xyz="-0.08 0.0 1.17" rpy="0 0 0"/>
   </xacro:if>
 
 </robot>

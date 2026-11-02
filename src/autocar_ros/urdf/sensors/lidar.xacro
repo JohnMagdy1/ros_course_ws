@@ -73,6 +73,39 @@
         </plugin>
       </sensor>
     </gazebo>
+
+  </xacro:macro>
+
+
+  <!-- ============================================================= -->
+  <!-- 3D LiDAR — outputs sensor_msgs/PointCloud2                    -->
+  <!-- ============================================================= -->
+
+  <xacro:macro name="lidar_3d"
+               params="parent:=chassis
+                       name:=lidar_3d
+                       xyz
+                       rpy
+                       topic:=/velodyne_points
+                       lasers:=16
+                       samples:=1875
+                       hz:=10
+                       min_range:=2.0
+                       max_range:=130.0
+                       gpu:=true">
+
+    <xacro:VLP-16
+        parent="${parent}"
+        name="${name}"
+        topic="${topic}"
+        lasers="${lasers}"
+        samples="${samples}"
+        hz="${hz}"
+        min_range="${min_range}"
+        max_range="${max_range}"
+        gpu="${gpu}">
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </xacro:VLP-16>
     
   </xacro:macro>
                     
