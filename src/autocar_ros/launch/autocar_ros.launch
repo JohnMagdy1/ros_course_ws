@@ -23,9 +23,15 @@
     <!-- Control node -->
     <node name="manual_drive_node" pkg="autocar_ros" type="car_drive.py" output="screen" launch-prefix="xterm -geometry 80x17+0-0 -e python3"/>
 
-    <!-- doppler node -->
-    <node name="doppler" pkg="autocar_ros" type="radar_doppler.py" output="screen"/>
-
+    <!-- AEB node -->
+    <node name="aeb" pkg="autocar_ros" type="aeb.py" output="screen">
+        <param name="d_min"       value="0.5"/>
+        <param name="ttc_stop"    value="0.6"/>
+        <param name="v_close_min" value="0.8"/>
+        <param name="d_release"   value="2.0"/>
+        <param name="ttc_release" value="1.0"/>
+    </node>
+    
     <!-- Publish joint states -->
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="rate" value="10" />

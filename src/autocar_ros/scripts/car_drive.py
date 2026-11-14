@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import rospy
 import sys, select, termios, tty
+import math
+from std_msgs.msg import Bool, Float32MultiArray
 from geometry_msgs.msg import Twist
 
 import argparse
@@ -19,14 +21,16 @@ VEHICLE TELEOPERATION CONTROL
 CONTROLS:
     W/S      : Increase/Decrease Forward Speed
     A/D      : Increase/Decrease Turning (Steering)
+    E        : Toggle AEB (local override)
     SPACE    : Emergency Stop
 
     CTRL+C   : Exit
 
-CURRENT CONTROLS:
-    Forward Speed: {linear:.2f} m/s
-    Turning Rate: {angular:.2f} rad/s
-    Mode: {mode}
+STATUS:
+    DRIVING Speed : {linear:.2f} m/s
+    Turning Rate  : {angular:.2f} rad/s
+    Mode          : {mode}
+    AEB           : {aeb}   d={dist}  v_r={vr}  ttc={ttc}
 """
 
 
@@ -48,15 +52,45 @@ class VehicleTeleop:
         self.reset_angular = False
         self.smoothing_factor = 1
 
+        # AEB state (fed by aeb_node)
+        self.d = None
+        self.vr = None
+        self.ttc = None
+        self.aeb_brake_signal = False
+        self.aeb_enabled = True
+        self.braking = False
+
         rospy.init_node('vehicle_teleop_keyboard')
         parser = argparse.ArgumentParser()
         parser.add_argument('-ns', '--namespace', type=str, default="")
         args, _ = parser.parse_known_args()
         ns = args.namespace
-        topic_name = ns + "/cmd_vel" if ns else "cmd_vel"
+        cmd_topic = ns + "/cmd_vel" if ns else "cmd_vel"
+        status_topic = ns + "/radar/status" if ns else "/radar/status"
+        brake_topic  = ns + "/aeb/brake"  if ns else "/aeb/brake"
 
-        self.pub = rospy.Publisher(topic_name, Twist, queue_size=1)
+        self.pub = rospy.Publisher(cmd_topic, Twist, queue_size=1)
+        rospy.Subscriber(status_topic, Float32MultiArray, self.status_cb)
+        rospy.Subscriber(brake_topic,  Bool,               self.brake_cb)
         self.rate = rospy.Rate(20)
+
+        rospy.loginfo("Teleop -> %s   (AEB: %s, %s)", cmd_topic, status_topic, brake_topic)
+
+    # ---- aeb_node inputs ----
+    def status_cb(self, m):
+        if len(m.data) < 3:
+            return
+        d, v, ttc = m.data[0], m.data[1], m.data[2]
+        self.d   = None if math.isinf(d)   else float(d)
+        self.vr  = None if self.d is None  else float(v)
+        self.ttc = None if math.isinf(ttc) else float(ttc)
+
+    def brake_cb(self, m):
+        self.aeb_brake_signal = bool(m.data)
+
+    # ---- decide this-frame brake (local toggle AND remote signal) ----
+    def _update_brake(self):
+        self.braking = self.aeb_enabled and self.aeb_brake_signal
 
     def get_key(self):
         rlist, _, _ = select.select([sys.stdin], [], [], 0.05)
@@ -69,13 +103,23 @@ class VehicleTeleop:
         return max(min_val, min(value, max_val))
 
     def update_display(self):
-        """Clear terminal and redraw the control panel."""
-        sys.stdout.write("\033[H\033[J")   # cursor home + clear
-        mode = "EMERGENCY STOP" if self.emergency_stop else "FORWARD"
+        sys.stdout.write("\033[H\033[J")
+        if self.emergency_stop:
+            mode = "EMERGENCY STOP"
+        elif self.braking:
+            mode = "AEB BRAKING"
+        elif not self.aeb_enabled:
+            mode = "DRIVING (AEB OFF)"
+        else:
+            mode = "DRIVING"
+        aeb   = "ON " if self.aeb_enabled else "OFF"
+        dist  = f"{self.d:.1f}m"    if self.d   is not None else "--"
+        vr    = f"{self.vr:.2f}m/s" if self.vr  is not None else "--"
+        ttc_s = f"{self.ttc:.1f}s"  if self.ttc is not None else "--"
         sys.stdout.write(msg.format(
             linear=self.current_linear,
             angular=abs(self.current_angular),
-            mode=mode
+            mode=mode, aeb=aeb, dist=dist, vr=vr, ttc=ttc_s
         ))
         sys.stdout.write("\n")
         sys.stdout.flush()
@@ -89,6 +133,12 @@ class VehicleTeleop:
         """Process a keypress. Returns False to exit the loop."""
         if key == '\x03':                       # Ctrl+C
             return False
+
+        # E toggles AEB
+        if key == 'e':
+            self.aeb_enabled = not self.aeb_enabled
+            if not self.aeb_enabled:
+                self.braking = False
 
         # Emergency stop override
         if self.emergency_stop:
@@ -139,6 +189,8 @@ class VehicleTeleop:
                     if not self.handle_key(key):
                         break
 
+                self._update_brake()  # update braking state based on AEB signal
+
                 # Limits (run every loop)
                 self.target_linear = self.apply_limits(
                     self.target_linear, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED)
@@ -151,13 +203,20 @@ class VehicleTeleop:
                 self.current_angular = self.smooth_control(
                     self.target_angular, self.current_angular)
 
-                # Publish (run every loop)
-                twist = Twist()
-                twist.linear.x = self.current_linear
-                twist.angular.z = self.current_angular
-                self.pub.publish(twist)
-                self.update_display()       # redraw only on keypress
+                if self.emergency_stop or self.braking:
+                    # hard e-stop: clear targets, driver must press W to resume
+                    self.target_linear   = 0.0
+                    self.target_angular  = 0.0
+                    self.current_linear  = 0.0
+                    self.current_angular = 0.0
+                    self.pub.publish(Twist())
+                else:
+                    twist = Twist()
+                    twist.linear.x  = self.current_linear
+                    twist.angular.z = self.current_angular
+                    self.pub.publish(twist)
 
+                self.update_display()
                 self.rate.sleep()
 
         except Exception as e:

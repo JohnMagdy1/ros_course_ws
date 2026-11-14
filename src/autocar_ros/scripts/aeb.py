@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 import rospy
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Bool, Float32MultiArray
 from ainstein_radar_msgs.msg import RadarTargetArray
 
 
@@ -45,16 +45,28 @@ class RangeTracker:
         return self.x[0], self.x[1]
 
 
-class RadarReader:
+class AEB:
     def __init__(self):
+        # ---- params ----
+        self.d_min          = rospy.get_param('~d_min',         1.0)
+        self.ttc_stop       = rospy.get_param('~ttc_stop',      1.0)
+        self.d_release      = rospy.get_param('~d_release',     2.5)
+        self.ttc_release    = rospy.get_param('~ttc_release',   2.0)
+        self.confirm_frames = rospy.get_param('~confirm_frames', 3)
 
         # ---- internal state ----
         self.trackers      = {}
         self.d_offset      = (3.8/2) - 0.7
+        self.braking       = False
+        self.danger_streak = 0
+        self.safe_streak   = 0
         
         # ---- io ----
         rospy.Subscriber('/radar/targets', RadarTargetArray, self.cb)
         self.status_pub = rospy.Publisher('/radar/status', Float32MultiArray, queue_size=1)
+        self.brake_pub  = rospy.Publisher('/aeb/brake', Bool, queue_size=1)
+
+        rospy.loginfo("AEB: d_min=%.1fm ttc_stop=%.1fs confirm=%d", self.d_min, self.ttc_stop, self.confirm_frames)
 
     # ---- helpers ----
     def _ttc(self, d, v):
@@ -63,6 +75,23 @@ class RadarReader:
         if v >= 0:
             return None
         return d / (-v)
+
+    def _decide(self, d, v, ttc):
+        danger = (d is not None) and ((d < self.d_min) or (ttc is not None and ttc < self.ttc_stop))
+        safe = (d is not None and d > self.d_release and (ttc is None or ttc > self.ttc_release))
+
+        self.danger_streak = self.danger_streak + 1 if danger else 0
+        self.safe_streak   = self.safe_streak   + 1 if safe   else 0
+
+        if self.braking:
+            if self.safe_streak >= self.confirm_frames:
+                self.braking = False
+                rospy.loginfo("AEB released (d=%.1fm)", d)
+        else:
+            if self.danger_streak >= self.confirm_frames:
+                self.braking = True
+                rospy.logwarn("AEB BRAKING  d=%.1fm  v_r=%.2fm/s  ttc=%s", d, v, f"{ttc:.1f}s" if ttc else "n/a")
+
     def cb(self, msg):
         now = msg.header.stamp.to_sec()
         seen = set()
@@ -90,6 +119,10 @@ class RadarReader:
             d, v = None, None
 
         ttc = self._ttc(d, v)
+
+        # ---- AEB decision ----
+        self._decide(d, v, ttc)
+
         # ---- publish status array [d, v, ttc] ----
 
         status.data = [
@@ -99,11 +132,11 @@ class RadarReader:
         ]
         self.status_pub.publish(status)
 
-        if d and v:
-            rospy.loginfo("d = %.2f m   v_r = %.2f m/s", d, v)
+        # ---- publish brake signal ----
+        self.brake_pub.publish(Bool(data=bool(self.braking)))
 
 
 if __name__ == '__main__':
-    rospy.init_node('radar_reader')
-    RadarReader()
+    rospy.init_node('aeb_node')
+    AEB()
     rospy.spin()
