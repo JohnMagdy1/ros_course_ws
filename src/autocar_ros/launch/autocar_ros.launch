@@ -23,6 +23,9 @@
     <!-- Control node -->
     <node name="manual_drive_node" pkg="autocar_ros" type="car_drive.py" output="screen" launch-prefix="xterm -geometry 80x17+0-0 -e python3"/>
 
+    <!-- doppler node -->
+    <node name="doppler" pkg="autocar_ros" type="radar_doppler.py" output="screen"/>
+
     <!-- Publish joint states -->
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="rate" value="10" />
