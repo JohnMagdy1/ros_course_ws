@@ -2,10 +2,11 @@
 <robot name="autocar_ros" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- ========== SENSOR ENABLE ARGS (default: all on) ========== -->
-  <xacro:arg name="enable_frontcam" default="true"/>
-  <xacro:arg name="enable_rearcam" default="true"/>
-  <xacro:arg name="enable_imu" default="true"/>
+  <xacro:arg name="enable_frontcam" default="false"/>
+  <xacro:arg name="enable_rearcam" default="false"/>
+  <xacro:arg name="enable_imu" default="false"/>
   <xacro:arg name="enable_lidar" default="true"/>
+  <xacro:arg name="enable_radar" default="true"/>
 
   <xacro:property name="r" value="0.3"/>
   <xacro:property name="w" value="0.25"/>
@@ -119,8 +120,14 @@
     <xacro:include filename="$(find autocar_ros)/urdf/sensors/lidar.xacro"/>
     <xacro:lidar_2d parent="chassis" name="lidar_2d"
                     xyz="1.2 0.0 0.75" rpy="0 0 0"/>
-    <xacro:lidar_3d parent="chassis" name="lidar_3d"
-                    xyz="-0.08 0.0 1.17" rpy="0 0 0"/>
+    <!-- <xacro:lidar_3d parent="chassis" name="lidar_3d"
+                    xyz="-0.08 0.0 1.17" rpy="0 0 0"/> -->
+  </xacro:if>
+
+  <xacro:if value="$(arg enable_radar)">
+    <xacro:include filename="$(find autocar_ros)/urdf/sensors/radar.xacro"/>
+    <xacro:ainstein_radar parent_link="chassis" name="radar_front"
+                         xyz="0.7 0.0 0.85" rpy="0 0 0" fov="0.75" samples="5" max_range="30.0"/>
   </xacro:if>
 
 </robot>

@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /sensors1
       Splitter Ratio: 0.5
     Tree Height: 788
   - Class: rviz/Selection
@@ -24,7 +25,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 3
-    SyncSource: lidar_3d
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -64,16 +65,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        camera_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_rear_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         chassis:
           Alpha: 1
           Show Axes: false
@@ -89,21 +80,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        lidar_2d_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lidar_3d:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lidar_3d_base_link:
+        radar_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -279,6 +256,24 @@ Visualization Manager:
           Topic: /imu/data
           Unreliable: false
           Value: false
+        - Alpha: 1
+          Class: ainstein_radar_rviz_plugins/RadarTargetArray
+          Color: 255; 0; 0
+          Color Method: Flat
+          Enabled: true
+          Info Text Height: 0.05000000074505806
+          Max Range: 100
+          Min Range: 0
+          Name: radar
+          Number of Scans: 1
+          Queue Size: 10
+          Scale: 0.20000000298023224
+          Shape: Cube
+          Show Info: false
+          Show Speed: false
+          Topic: /radar/targets
+          Unreliable: false
+          Value: true
       Enabled: true
       Name: sensors
   Enabled: true
@@ -317,17 +312,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -2.3873462677001953
-        Y: -0.8635364174842834
-        Z: 1.5075558423995972
+        X: -0.5427128076553345
+        Y: 0.5284522771835327
+        Z: 2.562152624130249
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3947965204715729
+      Pitch: 1.0047965049743652
       Target Frame: <Fixed Frame>
-      Yaw: 3.0635812282562256
+      Yaw: 3.018580913543701
     Saved: ~
 Window Geometry:
   Displays:

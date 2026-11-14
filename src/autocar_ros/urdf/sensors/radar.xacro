@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ainstein_radar" params="parent_link name xyz rpy
+                                             topic:=radar/targets
+                                             fov:=0.75
+                                             samples:=100
+                                             min_range:=1.0
+                                             max_range:=30.0
+                                             update_rate:=30">
+
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <!-- <box size="0.08 0.08 0.05"/> -->
+          <!-- <mesh filename="package://gazebo_plugins/test/multi_robot_scenario/meshes/laser/hokuyo.dae"/> -->
+          <mesh filename="package://autocar_ros/meshes/hokuyo.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.08 0.08 0.05"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.2"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}_sensor" type="ray">
+        <!-- <visualize>true</visualize> -->
+        <always_on>true</always_on>
+        <material>Gazebo/DarkGrey</material>
+        <update_rate>${update_rate}</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>${samples}</samples>
+              <resolution>1.0</resolution>
+              <min_angle>-${fov/2.0}</min_angle>
+              <max_angle>${fov/2.0}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.1</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.05</stddev>
+          </noise>
+        </ray>    
+
+        <!-- The Ainstein radar plugin -->
+        <plugin name="${name}_controller" filename="libainstein_radar_gazebo_plugins.so">
+          <topicName>${topic}</topicName>
+          <frameName>${name}_link</frameName>
+          <updateRate>${update_rate}</updateRate>
+          <noiseStdevRange>0.05</noiseStdevRange>
+          <noiseStdevAzimuth>0.5</noiseStdevAzimuth>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>
