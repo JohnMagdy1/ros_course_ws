@@ -1,0 +1,902 @@
+<sdf version='1.7'>
+  <world name='default'>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+      </link>
+    </model>
+
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+
+    <road name="Primary">
+      <width>7.34</width>
+      <point>0 0 0</point>
+      <point>500 0 0</point>
+      <material>
+        <script>
+          <uri>file://media/materials/scripts/gazebo.material</uri>
+          <name>Gazebo/Primary</name>
+        </script>
+      </material>
+    </road>
+
+    <!-- ===== Lamp posts every 50 m, alternating sides ===== -->
+
+    <!-- x = 0, right side -->
+    <model name='lamp_post_000'>
+      <static>1</static>
+      <pose>0 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_000' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 50, left side -->
+    <model name='lamp_post_050'>
+      <static>1</static>
+      <pose>50 -4.5 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_050' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 100, right side -->
+    <model name='lamp_post_100'>
+      <static>1</static>
+      <pose>100 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_100' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 150, left side -->
+    <model name='lamp_post_150'>
+      <static>1</static>
+      <pose>150 -4.5 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_150' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 200, right side -->
+    <model name='lamp_post_200'>
+      <static>1</static>
+      <pose>200 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_200' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 250, left side -->
+    <model name='lamp_post_250'>
+      <static>1</static>
+      <pose>250 -4.5 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_250' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 300, right side -->
+    <model name='lamp_post_300'>
+      <static>1</static>
+      <pose>300 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_300' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 350, left side -->
+    <model name='lamp_post_350'>
+      <static>1</static>
+      <pose>350 -4.5 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_350' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 400, right side -->
+    <model name='lamp_post_400'>
+      <static>1</static>
+      <pose>400 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_400' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 450, left side -->
+    <model name='lamp_post_450'>
+      <static>1</static>
+      <pose>450 -4.5 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_450' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- x = 500, right side -->
+    <model name='lamp_post_500'>
+      <static>1</static>
+      <pose>500 4.5 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+        </collision>
+        <visual name='visual_pole'>
+          <pose>0 0 2.5 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>5</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+        </collision>
+        <visual name='visual_arm'>
+          <pose>0 -0.6 4.9 0 0 0</pose>
+          <geometry><box><size>0.08 1.2 0.08</size></box></geometry>
+          <material>
+            <ambient>0.25 0.25 0.25 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+        <collision name='collision_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+        </collision>
+        <visual name='visual_head'>
+          <pose>0 -1.15 4.8 0 0 0</pose>
+          <geometry><box><size>0.4 0.3 0.15</size></box></geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.8 1</diffuse>
+            <emissive>0.7 0.7 0.4 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <light name='lamp_500' type='point'>
+        <pose>0 -1.15 4.7 0 0 0</pose>
+        <cast_shadows>1</cast_shadows>
+        <diffuse>1 0.95 0.75 1</diffuse>
+        <specular>0.3 0.3 0.2 1</specular>
+        <attenuation>
+          <range>20</range>
+          <constant>0.5</constant>
+          <linear>0.1</linear>
+          <quadratic>0.02</quadratic>
+        </attenuation>
+      </light>
+    </model>
+
+    <!-- ===== Small buildings (3) ===== -->
+
+    <!-- Building 1: x = 80, right side -->
+    <model name='building_01'>
+      <static>1</static>
+      <pose>80 15 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_body'>
+          <pose>0 0 2 0 0 0</pose>
+          <geometry><box><size>8 6 4</size></box></geometry>
+        </collision>
+        <visual name='visual_body'>
+          <pose>0 0 2 0 0 0</pose>
+          <geometry><box><size>8 6 4</size></box></geometry>
+          <material>
+            <ambient>0.55 0.45 0.35 1</ambient>
+            <diffuse>0.75 0.62 0.48 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_roof'>
+          <pose>0 0 4.15 0 0 0</pose>
+          <geometry><box><size>8.6 6.6 0.3</size></box></geometry>
+        </collision>
+        <visual name='visual_roof'>
+          <pose>0 0 4.15 0 0 0</pose>
+          <geometry><box><size>8.6 6.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.3 0.15 0.1 1</ambient>
+            <diffuse>0.45 0.2 0.15 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_door'>
+          <pose>0 -3.02 1.1 0 0 0</pose>
+          <geometry><box><size>1.2 0.1 2.2</size></box></geometry>
+          <material>
+            <ambient>0.15 0.1 0.05 1</ambient>
+            <diffuse>0.25 0.15 0.08 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_window_1'>
+          <pose>-2.2 -3.02 2.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.1 1</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_window_2'>
+          <pose>2.2 -3.02 2.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.1 1</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Building 2: x = 220, left side (yaw = pi) -->
+    <model name='building_02'>
+      <static>1</static>
+      <pose>220 -18 0 0 0 3.14159</pose>
+      <link name='link'>
+        <collision name='collision_body'>
+          <pose>0 0 3 0 0 0</pose>
+          <geometry><box><size>10 7 6</size></box></geometry>
+        </collision>
+        <visual name='visual_body'>
+          <pose>0 0 3 0 0 0</pose>
+          <geometry><box><size>10 7 6</size></box></geometry>
+          <material>
+            <ambient>0.45 0.5 0.55 1</ambient>
+            <diffuse>0.6 0.68 0.75 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_roof'>
+          <pose>0 0 6.15 0 0 0</pose>
+          <geometry><box><size>10.6 7.6 0.3</size></box></geometry>
+        </collision>
+        <visual name='visual_roof'>
+          <pose>0 0 6.15 0 0 0</pose>
+          <geometry><box><size>10.6 7.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.2 0.22 0.25 1</ambient>
+            <diffuse>0.3 0.33 0.38 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_door'>
+          <pose>0 -3.52 1.2 0 0 0</pose>
+          <geometry><box><size>1.4 0.1 2.4</size></box></geometry>
+          <material>
+            <ambient>0.15 0.1 0.05 1</ambient>
+            <diffuse>0.25 0.15 0.08 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_window_1'>
+          <pose>-3 -3.52 4 0 0 0</pose>
+          <geometry><box><size>1.4 0.1 1.2</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_window_2'>
+          <pose>3 -3.52 4 0 0 0</pose>
+          <geometry><box><size>1.4 0.1 1.2</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_window_3'>
+          <pose>-3 -3.52 1.8 0 0 0</pose>
+          <geometry><box><size>1.4 0.1 1.2</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_window_4'>
+          <pose>3 -3.52 1.8 0 0 0</pose>
+          <geometry><box><size>1.4 0.1 1.2</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Building 3: x = 380, right side -->
+    <model name='building_03'>
+      <static>1</static>
+      <pose>380 14 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_body'>
+          <pose>0 0 2 0 0 0</pose>
+          <geometry><box><size>6 5 4</size></box></geometry>
+        </collision>
+        <visual name='visual_body'>
+          <pose>0 0 2 0 0 0</pose>
+          <geometry><box><size>6 5 4</size></box></geometry>
+          <material>
+            <ambient>0.6 0.55 0.4 1</ambient>
+            <diffuse>0.78 0.72 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name='collision_roof'>
+          <pose>0 0 4.15 0 0 0</pose>
+          <geometry><box><size>6.6 5.6 0.3</size></box></geometry>
+        </collision>
+        <visual name='visual_roof'>
+          <pose>0 0 4.15 0 0 0</pose>
+          <geometry><box><size>6.6 5.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.25 0.2 0.15 1</ambient>
+            <diffuse>0.38 0.3 0.22 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_door'>
+          <pose>0 -2.52 1.05 0 0 0</pose>
+          <geometry><box><size>1.1 0.1 2.1</size></box></geometry>
+          <material>
+            <ambient>0.15 0.1 0.05 1</ambient>
+            <diffuse>0.25 0.15 0.08 1</diffuse>
+          </material>
+        </visual>
+        <visual name='visual_window_1'>
+          <pose>-1.7 -2.52 2.6 0 0 0</pose>
+          <geometry><box><size>1 0.1 1</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_window_2'>
+          <pose>1.7 -2.52 2.6 0 0 0</pose>
+          <geometry><box><size>1 0.1 1</size></box></geometry>
+          <material>
+            <ambient>0.8 0.85 0.9 1</ambient>
+            <diffuse>0.8 0.85 0.9 1</diffuse>
+            <emissive>0.35 0.4 0.45 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

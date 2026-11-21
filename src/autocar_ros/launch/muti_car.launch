@@ -20,21 +20,23 @@
     <include file="$(find autocar_ros)/launch/autocar_ros.launch">
         <arg name="name"            value="ego"/>
         <arg name="enable_frontcam" value="true"/>
-        <arg name="enable_rearcam"  value="true"/>
+        <arg name="spawn_y"         value="-2.0"/>
         <arg name="enable_radar"    value="true"/>
-        <arg name="enable_lidar"    value="true"/>
-        <arg name="enable_imu"      value="true"/>
+        <!-- <arg name="enable_rearcam"  value="true"/> -->
+        <!-- <arg name="enable_lidar"    value="true"/> -->
+        <!-- <arg name="enable_imu"      value="true"/> -->
         <arg name="teleop_geom"     value="80x17+0-0"/>
     </include>
 
     <include file="$(find autocar_ros)/launch/autocar_ros.launch">
         <arg name="name"            value="target"/>
         <arg name="spawn_x"         value="15"/>
-        <arg name="enable_frontcam" value="true"/>
+        <arg name="spawn_y"         value="-2.0"/>
+        <!-- <arg name="enable_frontcam" value="true"/>
         <arg name="enable_rearcam"  value="true"/>
         <arg name="enable_radar"    value="true"/>
         <arg name="enable_lidar"    value="true"/>
-        <arg name="enable_imu"      value="true"/>
+        <arg name="enable_imu"      value="true"/> -->
         <arg name="teleop_geom"     value="80x17+0+0"/>
     </include>
 
