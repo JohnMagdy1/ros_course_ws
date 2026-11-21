@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /sensors1
       Splitter Ratio: 0.5
     Tree Height: 417
@@ -308,7 +309,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: ego/odom
+    Fixed Frame: ego/base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -332,7 +333,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.3019232749938965
+      Distance: 34.96754455566406
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -340,17 +341,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 5.815031051635742
-        Y: 2.4806246757507324
-        Z: 9.26476001739502
+        X: -1.1491196155548096
+        Y: 1.2377580404281616
+        Z: 4.975638389587402
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.61479651927948
+      Pitch: 1.0997964143753052
       Target Frame: <Fixed Frame>
-      Yaw: 2.843580722808838
+      Yaw: 3.1935813426971436
     Saved: ~
 Window Geometry:
   Displays:
