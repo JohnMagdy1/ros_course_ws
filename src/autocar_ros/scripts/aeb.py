@@ -62,9 +62,9 @@ class AEB:
         self.safe_streak   = 0
         
         # ---- io ----
-        rospy.Subscriber('/radar/targets', RadarTargetArray, self.cb)
-        self.status_pub = rospy.Publisher('/radar/status', Float32MultiArray, queue_size=1)
-        self.brake_pub  = rospy.Publisher('/aeb/brake', Bool, queue_size=1)
+        rospy.Subscriber('radar/targets', RadarTargetArray, self.cb)
+        self.status_pub = rospy.Publisher('radar/status', Float32MultiArray, queue_size=1)
+        self.brake_pub  = rospy.Publisher('aeb/brake', Bool, queue_size=1)
 
         rospy.loginfo("AEB: d_min=%.1fm ttc_stop=%.1fs confirm=%d", self.d_min, self.ttc_stop, self.confirm_frames)
 

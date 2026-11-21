@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <robot name="autocar_ros" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:arg name="ns" default=""/>
+  <xacro:property name="fp" value="$(arg ns)"/>
+
   <!-- ========== SENSOR ENABLE ARGS (default: all on) ========== -->
   <xacro:arg name="enable_frontcam" default="true"/>
   <xacro:arg name="enable_rearcam" default="false"/>
@@ -12,15 +15,15 @@
   <xacro:property name="w" value="0.25"/>
 
   <!-- Base Footprint -->
-  <link name="base_footprint"/>
+  <link name="${fp}/base_footprint"/>
   
-  <joint name="base_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="chassis"/>
+  <joint name="${fp}/base_joint" type="fixed">
+    <parent link="${fp}/base_footprint"/>
+    <child link="${fp}/chassis"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
 
-  <link name="chassis">
+  <link name="${fp}/chassis">
     <visual>
       <geometry>
         <!-- <box size="1.4 3.8 0.3"/> -->
@@ -30,20 +33,20 @@
       <origin xyz="-0.05 0 0.56" rpy="0 0 -1.5708"/>
     </visual>
     <collision>
-      <geometry>
-        <box size="1.4 3.8 0.3"/>
+      <geometry> 
+        <box size="1.4 3.8 1.0"/>
       </geometry>
       <origin xyz="0 0 0.45" rpy="0 0 -1.5708"/>
     </collision>
     <inertial>
-      <mass value="500.0"/>
+      <mass value="50.0"/>
       <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
     </inertial>
   </link>
 
   <!-- Wheel Macro -->
   <xacro:macro name="wheel" params="name x y mu">
-    <link name="${name}">
+    <link name="${fp}/${name}">
       <visual>
         <geometry>
           <cylinder radius="${r}" length="${w}"/>
@@ -60,39 +63,39 @@
       </inertial>
     </link>
 
-    <joint name="${name}_joint" type="continuous">
-      <parent link="chassis"/>
-      <child link="${name}"/>
+    <joint name="${fp}/${name}_joint" type="continuous">
+      <parent link="${fp}/chassis"/>
+      <child link="${fp}/${name}"/>
       <origin xyz="${x} ${y} 0.2" rpy="1.5708 0 0"/>
       <axis xyz="0 0 1"/>
     </joint>
 
-    <gazebo reference="${name}">
+    <gazebo reference="${fp}/${name}">
       <material>Gazebo/Black</material>
-      <!-- <mu1>${mu}</mu1>
-      <mu2>${mu}</mu2> -->
+      <mu1>${mu}</mu1>
+      <mu2>${mu}</mu2>
     </gazebo>
   </xacro:macro>
 
   <!-- Rear Wheels -->
-  <xacro:wheel name="rear_wheel_right" x="-1.25" y="0.8" mu="10"/>
-  <xacro:wheel name="rear_wheel_left"  x="-1.25" y="-0.8" mu="10"/>
+  <xacro:wheel name="rear_wheel_right" x="-1.25" y="0.8" mu="1"/>
+  <xacro:wheel name="rear_wheel_left"  x="-1.25" y="-0.8" mu="1"/>
 
   <!-- Front Wheels -->
-  <xacro:wheel name="front_wheel_right" x="1.25" y="0.8" mu="5"/>
-  <xacro:wheel name="front_wheel_left"  x="1.25" y="-0.8" mu="5"/>
+  <xacro:wheel name="front_wheel_right" x="1.25" y="0.8" mu="1"/>
+  <xacro:wheel name="front_wheel_left"  x="1.25" y="-0.8" mu="1"/>
   
   <!-- Differential Drive Plugin -->
   <gazebo>
     <plugin name="planar_move" filename="libgazebo_ros_planar_move.so">
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+      <odometryFrame>${fp}/odom</odometryFrame>
       <odometryRate>10</odometryRate>
       <cmdTimeout>0.5</cmdTimeout>
-      <robotBaseFrame>base_footprint</robotBaseFrame>
-      <leftJoint>front_wheel_left_joint</leftJoint>
-      <rightJoint>front_wheel_right_joint</rightJoint>
+      <robotBaseFrame>${fp}/base_footprint</robotBaseFrame>
+      <leftJoint>${fp}/front_wheel_left_joint</leftJoint>
+      <rightJoint>${fp}/front_wheel_right_joint</rightJoint>
       <wheelSeparation>1.6</wheelSeparation>
       <wheelDiameter>0.6</wheelDiameter>
       <torque>0</torque>
@@ -102,31 +105,31 @@
   <xacro:include filename="$(find autocar_ros)/urdf/sensors/camera_d435.xacro"/>
   
   <xacro:if value="$(arg enable_frontcam)">
-    <xacro:camera_d435 parent_link="chassis" name="camera_front"
+    <xacro:camera_d435 parent_link="${fp}/chassis" name="${fp}/camera_front" camera_name="camera_front"
                       xyz="0.06 0 1.15" rpy="0 0 0" use_depth="false"/>
   </xacro:if>
 
   <xacro:if value="$(arg enable_rearcam)">
-    <xacro:camera_d435 parent_link="chassis" name="camera_rear"
+    <xacro:camera_d435 parent_link="${fp}/chassis" name="${fp}/camera_rear" camera_name="camera_rear"
                        xyz="-1.1 0 1.15" rpy="0 0 3.14159" use_depth="false"/>
   </xacro:if>
 
   <xacro:if value="$(arg enable_imu)">
     <xacro:include filename="$(find autocar_ros)/urdf/sensors/imu.xacro"/>
-    <xacro:imu_sensor name="imu" parent="chassis" xyz="0 0 0" rpy="0 -1.5708 0"/>
+    <xacro:imu_sensor name="${fp}/imu" parent="${fp}/chassis" xyz="0 0 0" rpy="0 -1.5708 0"/>
   </xacro:if>
 
   <xacro:if value="$(arg enable_lidar)">
     <xacro:include filename="$(find autocar_ros)/urdf/sensors/lidar.xacro"/>
-    <xacro:lidar_2d parent="chassis" name="lidar_2d"
+    <xacro:lidar_2d parent="${fp}/chassis" name="${fp}/lidar_2d"
                     xyz="1.2 0.0 0.75" rpy="0 0 0"/>
-    <xacro:lidar_3d parent="chassis" name="lidar_3d"
+    <xacro:lidar_3d parent="${fp}/chassis" name="${fp}/lidar_3d"
                     xyz="-0.08 0.0 1.17" rpy="0 0 0"/>
   </xacro:if>
 
   <xacro:if value="$(arg enable_radar)">
     <xacro:include filename="$(find autocar_ros)/urdf/sensors/radar.xacro"/>
-    <xacro:ainstein_radar parent_link="chassis" name="radar_front"
+    <xacro:ainstein_radar parent_link="${fp}/chassis" name="${fp}/radar_front"
                          xyz="0.7 0.0 0.85" rpy="0 0 0" fov="0.75" samples="5" max_range="30.0"/>
   </xacro:if>
 

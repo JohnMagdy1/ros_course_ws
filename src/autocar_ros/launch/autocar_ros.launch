@@ -1,59 +1,70 @@
 <?xml version="1.0"?>
 <launch>
 
-    <!-- Launch argument: toggle Gazebo GUI on/off -->
-    <arg name="gazebo_gui" default="true"/>
+    <arg name="name"            default="autocar_ros"/>
+    <arg name="spawn_x"         default="0"/>
+    <arg name="spawn_y"         default="0"/>
+    <arg name="spawn_z"         default="0.1"/>
+    <arg name="enable_frontcam" default="false"/>
+    <arg name="enable_rearcam"  default="false"/>
+    <arg name="enable_imu"      default="false"/>
+    <arg name="enable_lidar"    default="false"/>
+    <arg name="enable_radar"    default="false"/>
+    <arg name="teleop_geom"     default="80x17+0-0"/>
 
-    <!-- Start Gazebo with empty world --> 
-    <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find autocar_ros)/worlds/autocar_ros.world"/>
-        <arg name="gui" value="$(arg gazebo_gui)"/>
-    </include>
+    <group ns="$(arg name)">
 
-    <!-- Load robot description from xacro -->
-    <param name="robot_description" command="$(find xacro)/xacro '$(find autocar_ros)/urdf/autocar_ros.xacro'"/>
+        <!-- Load robot description from xacro -->
+        <param name="robot_description" command="$(find xacro)/xacro '$(find autocar_ros)/urdf/autocar_ros.xacro' 
+            ns:=$(arg name) 
+            enable_frontcam:=$(arg enable_frontcam) 
+            enable_rearcam:=$(arg enable_rearcam) 
+            enable_imu:=$(arg enable_imu) 
+            enable_lidar:=$(arg enable_lidar) 
+            enable_radar:=$(arg enable_radar)"/>
 
-    <!-- Spawn robot -->
-    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
-        args="-param robot_description -urdf -model car -x 0 -y 0 -z 0.1" output="screen"/>
+        <!-- ============ SPAWN ============ -->
+        <node name="spawn_urdf_$(arg name)" pkg="gazebo_ros" type="spawn_model"
+                args="-param robot_description -urdf -model $(arg name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"
+                output="screen"/>
 
-   <!-- RViz visualization -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find autocar_ros)/rviz/car.rviz"/>
+        <!-- ============ STATE PUBLISHERS ============ -->
+        <node name="joint_state_publisher_$(arg name)" pkg="joint_state_publisher" type="joint_state_publisher">
+                <param name="rate" value="10"/>
+        </node>
 
-    <!-- Control node -->
-    <node name="manual_drive_node" pkg="autocar_ros" type="car_drive.py" output="screen" launch-prefix="xterm -geometry 80x17+0-0 -e python3"/>
+        <node name="robot_state_publisher_$(arg name)" pkg="robot_state_publisher" type="robot_state_publisher">
+        </node>
 
-    <!-- AEB node -->
-    <node name="aeb" pkg="autocar_ros" type="aeb.py" output="screen">
-        <param name="d_min"       value="0.5"/>
-        <param name="ttc_stop"    value="0.6"/>
-        <param name="v_close_min" value="0.8"/>
-        <param name="d_release"   value="2.0"/>
-        <param name="ttc_release" value="1.0"/>
-    </node>
-    
-    <!-- Publish joint states -->
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <param name="rate" value="10" />
-    </node>
-    
-    <!-- Robot state publisher with proper rate -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+        <!-- ============ TF: map -> <ns>/odom ============ -->
+        <node pkg="tf2_ros" type="static_transform_publisher"
+                name="map_to_odom_$(arg name)"
+                args="0 0 0 0 0 0 map $(arg name)/odom"/>
 
-    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom"
-        args="0 0 0 0 0 0 map odom" />
+        <!-- ============ CAMERA OPTICAL FRAMES (only if enabled) ============ -->
+        <node if="$(arg enable_frontcam)" pkg="tf2_ros" type="static_transform_publisher"
+                name="front_link_to_optical_$(arg name)"
+                args="0 0 0 -1.5708 0 -1.5708 $(arg name)/camera_front_link $(arg name)/camera_front_color_optical_frame"/>
 
-    <node name="map_server" pkg="map_server" type="map_server"
-          args="$(find autocar_ros)/maps/autocar_ros.yaml"
-          output="screen">
-        <param name="frame_id" value="map"/>
-    </node>
-    
-    <node pkg="tf2_ros" type="static_transform_publisher" name="front_link_to_optical"
-        args="0 0 0 -1.5708 0 -1.5708 camera_front_link camera_front_color_optical_frame" />
+        <node if="$(arg enable_rearcam)" pkg="tf2_ros" type="static_transform_publisher"
+                name="rear_link_to_optical_$(arg name)"
+                args="0 0 0 -1.5708 0 -1.5708 $(arg name)/camera_rear_link $(arg name)/camera_rear_color_optical_frame"/>
 
-    <node pkg="tf2_ros" type="static_transform_publisher" name="rear_link_to_optical"
-            args="0 0 0 -1.5708 0 -1.5708 camera_rear_link camera_rear_color_optical_frame"/>
+        <!-- ============ TELEOP ============ -->
+        <node name="manual_drive_$(arg name)" pkg="autocar_ros" type="car_drive.py"
+                output="screen"
+                args="$(eval ('-ns /' + arg('name')))"
+                launch-prefix="xterm -geometry $(arg teleop_geom) -e python3"/>
 
+        <!-- AEB node -->
+        <node name="aeb" pkg="autocar_ros" type="aeb.py" output="screen">
+            <param name="d_min"       value="0.5"/>
+            <param name="ttc_stop"    value="0.6"/>
+            <param name="v_close_min" value="0.8"/>
+            <param name="d_release"   value="2.0"/>
+            <param name="ttc_release" value="1.0"/>
+        </node>
+
+    </group>
 
 </launch>

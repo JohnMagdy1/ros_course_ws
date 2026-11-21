@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="gazebo_gui" default="false"/>
+    <arg name="world_name" default="autocar_ros"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find autocar_ros)/worlds/$(arg world_name).world"/>
+        <arg name="gui"        value="$(arg gazebo_gui)"/>
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz"
+          args="-d $(find autocar_ros)/rviz/car.rviz"/>
+
+    <node name="map_server" pkg="map_server" type="map_server"
+          args="$(find autocar_ros)/maps/$(arg world_name).yaml"
+          output="screen">
+        <param name="frame_id" value="map"/>
+    </node>
+
+    <include file="$(find autocar_ros)/launch/autocar_ros.launch">
+        <arg name="name"            value="ego"/>
+        <arg name="enable_frontcam" value="true"/>
+        <arg name="enable_rearcam"  value="true"/>
+        <arg name="enable_radar"    value="true"/>
+        <arg name="enable_lidar"    value="true"/>
+        <arg name="enable_imu"      value="true"/>
+        <arg name="teleop_geom"     value="80x17+0-0"/>
+    </include>
+
+</launch>

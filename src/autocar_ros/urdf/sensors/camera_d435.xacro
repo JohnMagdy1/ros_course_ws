@@ -7,7 +7,7 @@
                params="parent_link name xyz rpy
                        min_range:=0.3 max_range:=30.0 update_rate:=20
                        horizontal_fov_deg:=80 width:=640 height:=480
-                       use_depth:=true">
+                       camera_name:=camera_d435 use_depth:=true">
 
     <!-- Physical model (mesh + collision + inertial) — same for both modes -->
     <xacro:realsense_d435_camera_model name="${name}" parent="${parent_link}">
@@ -35,11 +35,10 @@
           <plugin name="${name}_camera_controller" filename="libgazebo_ros_openni_kinect.so">
             <alwaysOn>true</alwaysOn>
             <updateRate>${update_rate}</updateRate>
-            <cameraName>${name}</cameraName>
+            <cameraName>${camera_name}</cameraName>
             <imageTopicName>color/image_raw</imageTopicName>
             <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
             <frameName>${name}_color_optical_frame</frameName>
-            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
             <depthImageTopicName>depth/image_raw</depthImageTopicName>
             <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
             <pointCloudTopicName>depth/points</pointCloudTopicName>
@@ -68,7 +67,7 @@
           <plugin name="${name}_camera_controller" filename="libgazebo_ros_camera.so">
             <alwaysOn>true</alwaysOn>
             <updateRate>${update_rate}</updateRate>
-            <cameraName>${name}</cameraName>
+            <cameraName>${camera_name}</cameraName>
             <imageTopicName>color/image_raw</imageTopicName>
             <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
             <frameName>${name}_color_optical_frame</frameName>

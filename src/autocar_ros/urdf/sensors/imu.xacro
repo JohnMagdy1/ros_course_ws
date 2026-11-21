@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="imu_sensor" params="name parent xyz rpy">
+  <xacro:macro name="imu_sensor" params="name parent xyz rpy topic:=imu/data">
     <link name="${name}_link">
       <inertial>
         <mass value="0.01"/>
@@ -33,7 +33,7 @@
         </imu>
         <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
           <frameName>${name}_link</frameName>
-          <topicName>${name}/data</topicName>
+          <topicName>${topic}</topicName>
           <updateRateHZ>100.0</updateRateHZ>
           <gaussianNoise>0.01</gaussianNoise>
           <xyzOffset>0 0 0</xyzOffset>

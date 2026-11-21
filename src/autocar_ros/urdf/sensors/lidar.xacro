@@ -12,11 +12,11 @@
                        name:=lidar_2d
                        xyz
                        rpy
-                       topic:=/scan
+                       topic:=scan
                        update_rate:=10
                        fov_deg:=270.0
                        samples:=720
-                       min_range:=0.1
+                       min_range:=1.0
                        max_range:=30.0">
 
 
@@ -86,7 +86,7 @@
                        name:=lidar_3d
                        xyz
                        rpy
-                       topic:=/velodyne_points
+                       topic:=velodyne_points
                        lasers:=16
                        samples:=1875
                        hz:=10
